@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Define CSS variables matching the design system
+// My color scheme for the tech interface
 const theme = {
     black: '#000000',
     techDark: '#0a0a0a',
@@ -23,9 +23,9 @@ const theme = {
     mainYellow: '#f6eb16'
 };
 
-// Script dialogues integrated from backend
+// All the dialogue responses BRIT can give
 const SCRIPT_DIALOGUES = {
-    // Day 1
+    // Day 1 responses
     "hey brit": "Hello inventors, how can I help you?",
     "hello brit": "Hello inventors, how can I help you?",
     "hi brit": "Hello inventors, how can I help you?",
@@ -42,19 +42,19 @@ const SCRIPT_DIALOGUES = {
     "can you find a verse in the bible that talks about working as a team": "Ecclesiastes 4:9 says 'Two people are better than one. They can help each other in everything they do.'",
     "we found all the pieces for harvey to put together the emotional shrink ray. can you pull up a blueprint of how it all goes together": "Philippian's 4:13 says, \"I can do all things through Christ because he gives me strength.\"",
 
-    // Day 2
+    // Day 2 responses
     "how do we find the esr in such a big space when we're so small": "It is going to be difficult to find the ESR, but Harvey has an invention that can help us. It is called a thermal lens. First, you need to assemble it. Assemble the magnifying glass and equip it with the thermal red lens.",
     "can you find a bible verse to encourage us to trust god": "Isaiah 41:10 says, \"So do not be afraid. I am with you. Do not be terrified. I am your God.\"",
     "our thermal lenses revealed that the esr is on the shelf. can you zoom in on the shelf to see if it is there": "I'd be happy to assist you in your search.",
 
-    // Day 3
+    // Day 3 responses
     "can you give us our instructions to help harvey": "I could give you your instructions, but I think that it would be wiser for you to watch this Bible story video first. The Bible should always be the first place you look.",
     "how does that bible story help us figure out what's wrong with the esr": "Great question. All of the followers must have been so confused when Paul completely changed his way of thinking and became a follower of Jesus. Everything probably seemed mixed-up and upside down when the guy who used to be against them was now teaching others about Jesus.\n\nTo figure out what's wrong with the ESR, you will need to unscramble some mixed-up words, so that Harvey can fix it and completely change everyone back to your regular size. Once you unscramble the mixed-up words, report back to me with the highlighted letters, so that we can figure out the bonus word.",
     "here are the highlighted letters. they are a, d, j, u, s, t, m, e, n, t. can you put those into your database to figure out what is wrong with the esr": "Yes, I am going to mix up the words and give you a couple possibilities of what the problem might be. Inventors, tell me what you think is the right answer.",
     "does the esr need an adjustment": "Yes, that's correct. Brilliant work inventors! We must let Harvey know immediately."
 };
 
-// Voice file mapping for specific dialogues - UPDATED TO MATCH YOUR ACTUAL FILES
+// Map specific dialogues to their voice files
 const VOICE_FILES = {
     "hey brit": "hello_inventors.mp3",
     "hello brit": "hello_inventors.mp3",
@@ -71,11 +71,11 @@ const VOICE_FILES = {
     "does the esr need an adjustment": "brilliant_work.mp3"
 };
 
-// Function to get script response
+// This handles matching user input to the right response
 const getScriptResponse = (userInput) => {
     const normalizedInput = userInput.toLowerCase().trim().replace(/[?!]/g, "");
 
-    // Direct match
+    // Check for exact matches first
     if (normalizedInput in SCRIPT_DIALOGUES) {
         return {
             response: SCRIPT_DIALOGUES[normalizedInput],
@@ -83,7 +83,7 @@ const getScriptResponse = (userInput) => {
         };
     }
 
-    // Special handling for highlighted letters dialogue with multiple variations
+    // Special case for the highlighted letters input (lots of variations possible)
     if (normalizedInput.includes("highlighted letters") &&
         (normalizedInput.includes("a") && normalizedInput.includes("d") && normalizedInput.includes("j") &&
             normalizedInput.includes("u") && normalizedInput.includes("s") && normalizedInput.includes("t") &&
@@ -104,7 +104,7 @@ const getScriptResponse = (userInput) => {
         };
     }
 
-    // Try to find the closest match for partial inputs
+    // Try to find partial matches for similar questions
     for (const [key, response] of Object.entries(SCRIPT_DIALOGUES)) {
         const keywords = ["harvey", "esr", "emotional shrink", "blueprint", "bible verse", "thermal", "shelf", "highlighted", "adjustment"];
 
@@ -123,7 +123,7 @@ const getScriptResponse = (userInput) => {
     };
 };
 
-// Animations
+// All my CSS animations
 const gridMove = keyframes`
     0% { transform: translate(0, 0); }
     100% { transform: translate(50px, 50px); }
@@ -185,7 +185,7 @@ const typewriter = keyframes`
     to { width: 100%; }
 `;
 
-// Styled Components for 1920x1080 viewport with mobile responsiveness
+// Main app wrapper - designed for 1920x1080 but responsive
 const AppWrapper = styled.div`
     width: 100vw;
     height: 100vh;
@@ -398,7 +398,6 @@ const DialogueCloseButton = styled.button`
     }
 `;
 
-// Add hover area to trigger button display
 const DialogueHoverArea = styled.div`
     position: fixed;
     bottom: 0;
@@ -410,7 +409,6 @@ const DialogueHoverArea = styled.div`
     background: transparent;
 `;
 
-// Add a small indicator to show hidden buttons
 const DialogueButton = styled.button`
     background: ${theme.techGrid};
     border: 1px solid ${theme.techBlue};
@@ -1130,7 +1128,6 @@ const ProcessingBar = styled.div`
     }
 `;
 
-// Add a small indicator to show hidden buttons
 const DialogueIndicator = styled.div`
     position: fixed;
     bottom: ${props => props.shouldShow ? '10px' : '-60px'};
@@ -1187,26 +1184,26 @@ const DialogueIndicator = styled.div`
     }
 `;
 
-// Bible Videos Data - Using YouTube embeds
+// YouTube video data for each day
 const BIBLE_VIDEOS = {
     1: {
-        youtubeId: "rLZ67inPx-4", // Day 1 - Paul's Conversion
+        youtubeId: "rLZ67inPx-4",
         duration: "1:38",
         title: "Day 1 - Paul's Conversion"
     },
     2: {
-        youtubeId: "jtV2PV9n3cY", // Day 2 - Paul and Silas in Prison
+        youtubeId: "jtV2PV9n3cY",
         duration: "2:34",
         title: "Day 2 - Paul and Silas in Prison"
     },
     3: {
-        youtubeId: "E_IsmzsFU5Y", // Day 3 - Paul's Transformation
+        youtubeId: "E_IsmzsFU5Y",
         duration: "1:51",
         title: "Day 3 - Paul's Transformation"
     }
 };
 
-// Dialogue Buttons Data
+// Quick command buttons for each day
 const DialogueButtons = {
     1: [
         { text: "Hey BRIT", dialogue: "Hey BRIT" },
@@ -1229,7 +1226,7 @@ const DialogueButtons = {
     ]
 };
 
-// Activity data
+// Activity instructions for each day
 const ACTIVITY_DATA = {
     1: {
         1: {
@@ -1275,7 +1272,7 @@ const ACTIVITY_DATA = {
     }
 };
 
-// Main Component
+// Main component starts here
 const VoiceBRIT = () => {
     const [messages, setMessages] = useState([
         { type: 'brit', text: "Hello inventors, welcome to the Research and Development Center! I'm BRIT, your Bible Reciting Intelligence Technology. How can I help you today?" }
@@ -1296,28 +1293,8 @@ const VoiceBRIT = () => {
     const recognitionRef = useRef(null);
     const hideButtonsTimeoutRef = useRef(null);
 
-    // Debug function to test voice file availability
-    const testVoiceFiles = async () => {
-        console.log('🧪 Testing all voice files...');
-        const testFiles = [
-            'hey_brit.mp3',
-            'mix_up_words.mp3',
-            'harvey_instructions.mp3'
-        ];
-
-        for (const file of testFiles) {
-            try {
-                const response = await fetch(`/voices/${file}`);
-                console.log(`✅ ${file}: ${response.status} ${response.statusText}`);
-            } catch (error) {
-                console.log(`❌ ${file}: ${error.message}`);
-            }
-        }
-    };
-
-    // Call this on component mount for debugging
+    // Start with buttons hidden
     useEffect(() => {
-        // Start with buttons hidden on all days
         setButtonsHidden(true);
 
         return () => {
@@ -1327,7 +1304,7 @@ const VoiceBRIT = () => {
         };
     }, []);
 
-    // Speech recognition setup
+    // Set up speech recognition
     useEffect(() => {
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1361,18 +1338,17 @@ const VoiceBRIT = () => {
         }
     }, []);
 
-    // Keyboard shortcuts
+    // Keyboard shortcuts setup
     useEffect(() => {
         const handleKeyPress = (e) => {
-            // Don't trigger if user is typing in input field
             if (e.target.tagName === 'INPUT') return;
 
             const keyMap = {
-                '1': 0, // Hey BRIT
-                '2': 1, // Second dialogue
-                '3': 2, // Third dialogue
-                '4': 3, // Fourth dialogue
-                '5': 4, // Fifth dialogue (if exists)
+                '1': 0,
+                '2': 1,
+                '3': 2,
+                '4': 3,
+                '5': 4,
                 'v': 'video',
                 'V': 'video'
             };
@@ -1394,23 +1370,20 @@ const VoiceBRIT = () => {
         return () => window.removeEventListener('keydown', handleKeyPress);
     }, [currentDay]);
 
-    // Auto-scroll to bottom
+    // Auto-scroll messages to bottom
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    // Show buttons when user interacts (no auto-hide)
     const showButtons = () => {
         setButtonsHidden(false);
 
-        // Clear any existing timeout
         if (hideButtonsTimeoutRef.current) {
             clearTimeout(hideButtonsTimeoutRef.current);
         }
     };
 
     const playBeep = () => {
-        // Create a beep sound
         try {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioContext.createOscillator();
@@ -1443,7 +1416,6 @@ const VoiceBRIT = () => {
             z-index: 9999;
         `;
 
-        // Create confetti pieces
         for (let i = 0; i < 100; i++) {
             const piece = document.createElement('div');
             const color = colors[Math.floor(Math.random() * colors.length)];
@@ -1468,7 +1440,6 @@ const VoiceBRIT = () => {
 
         document.body.appendChild(confettiContainer);
 
-        // Add CSS animation
         const style = document.createElement('style');
         style.textContent = `
             @keyframes confettiFall {
@@ -1484,7 +1455,6 @@ const VoiceBRIT = () => {
         `;
         document.head.appendChild(style);
 
-        // Remove confetti after animation
         setTimeout(() => {
             if (document.body.contains(confettiContainer)) {
                 document.body.removeChild(confettiContainer);
@@ -1513,30 +1483,24 @@ const VoiceBRIT = () => {
         const userMessage = voiceInput || input.trim();
         if (!userMessage || isLoading) return;
 
-        // Debug logging to see what's being processed
-        console.log('🔍 Input received:', userMessage);
-        console.log('🔍 Normalized input:', userMessage.toLowerCase().trim().replace(/[?!]/g, ""));
+        console.log('Processing input:', userMessage);
+        console.log('Normalized:', userMessage.toLowerCase().trim().replace(/[?!]/g, ""));
 
-        // Check if this is the Day 3 highlighted letters dialogue
+        // Special handling for Day 3 highlighted letters
         if (currentDay === 3 && userMessage.toLowerCase().includes('highlighted letters') &&
-            (userMessage.toLowerCase().includes('a') && userMessage.toLowerCase().includes('d') &&
-                userMessage.toLowerCase().includes('j') && userMessage.toLowerCase().includes('u') &&
-                userMessage.toLowerCase().includes('s') && userMessage.toLowerCase().includes('t') &&
-                userMessage.toLowerCase().includes('m') && userMessage.toLowerCase().includes('e') &&
-                userMessage.toLowerCase().includes('n') && userMessage.toLowerCase().includes('t'))) {
+            (userMessage.toLowerCase().includes('a') && userMessage.toLowerCase().includes('d') && userMessage.toLowerCase().includes('j') &&
+                userMessage.toLowerCase().includes('u') && userMessage.toLowerCase().includes('s') && userMessage.toLowerCase().includes('t') &&
+                userMessage.toLowerCase().includes('m') && userMessage.toLowerCase().includes('e') && userMessage.toLowerCase().includes('n') &&
+                userMessage.toLowerCase().includes('t'))) {
 
-            // Add user message
             setMessages([...messages, { type: 'user', text: userMessage }]);
 
-            // Add BRIT's response
             const britResponse = "Yes, I am going to mix up the words and give you a couple possibilities of what the problem might be. Inventors, tell me what you think is the right answer.";
             setMessages(prev => [...prev, { type: 'brit', text: britResponse }]);
 
-            // Play the specific voice file for this dialogue
-            console.log('🎵 Playing voice file for highlighted letters: mix_up_words.mp3');
+            console.log('Playing voice file for highlighted letters: mix_up_words.mp3');
             playVoiceFile('mix_up_words.mp3');
 
-            // Show processing animation first
             setShowProcessing(true);
             setDisplayContent(
                 <ProcessingAnimation>
@@ -1550,7 +1514,6 @@ const VoiceBRIT = () => {
             );
             setShowOverlay(true);
 
-            // After processing, show word options
             setTimeout(() => {
                 setShowProcessing(false);
                 setDisplayContent(
@@ -1561,7 +1524,6 @@ const VoiceBRIT = () => {
                                 key={index}
                                 onClick={(e) => {
                                     if (option === 'Adjustment') {
-                                        // Correct answer - show confetti
                                         showConfetti();
                                         setTimeout(() => {
                                             setInput('Does the ESR need an adjustment?');
@@ -1584,64 +1546,57 @@ const VoiceBRIT = () => {
             }, 2500);
 
             setInput('');
-            return; // Don't process further
+            return;
         }
 
         setInput('');
         setMessages([...messages, { type: 'user', text: userMessage }]);
         setIsLoading(true);
 
-        // Get script response (now returns object with response and voiceFile)
         const responseData = getScriptResponse(userMessage);
 
-        // Debug logging
-        console.log('🔍 Response data:', responseData);
-        console.log('🔍 Voice file:', responseData.voiceFile);
+        console.log('Response data:', responseData);
+        console.log('Voice file:', responseData.voiceFile);
 
-        // Add BRIT's response
         setMessages(prev => [...prev, { type: 'brit', text: responseData.response }]);
 
-        // Play voice file if available, otherwise use text-to-speech
         if (responseData.voiceFile) {
-            console.log('🎵 Playing voice file:', responseData.voiceFile);
+            console.log('Playing voice file:', responseData.voiceFile);
             playVoiceFile(responseData.voiceFile);
         } else {
-            console.log('🔄 No voice file, using text-to-speech');
+            console.log('No voice file, using text-to-speech');
             speakResponse(responseData.response);
         }
 
-        // Handle special actions
         handleActions(userMessage);
 
         setIsLoading(false);
     };
 
     const playVoiceFile = (filename) => {
-        console.log('🎵 Attempting to play voice file:', filename);
-        console.log('🎵 Full URL:', `/voices/${filename}`);
+        console.log('Attempting to play voice file:', filename);
+        console.log('Full URL:', `/voices/${filename}`);
 
         const audio = new Audio(`/voices/${filename}`);
         setBritState('speaking');
 
-        audio.onloadstart = () => console.log('🎵 Audio loading started');
-        audio.oncanplay = () => console.log('🎵 Audio can play');
-        audio.onplay = () => console.log('🎵 Audio started playing');
+        audio.onloadstart = () => console.log('Audio loading started');
+        audio.oncanplay = () => console.log('Audio can play');
+        audio.onplay = () => console.log('Audio started playing');
         audio.onended = () => {
-            console.log('🎵 Audio finished playing');
+            console.log('Audio finished playing');
             setBritState('idle');
         };
         audio.onerror = (e) => {
-            console.error('❌ Error playing voice file:', e);
-            console.error('❌ Audio error details:', audio.error);
-            console.log('🔄 Falling back to text-to-speech');
-            // Fallback to text-to-speech
+            console.error('Error playing voice file:', e);
+            console.error('Audio error details:', audio.error);
+            console.log('Falling back to text-to-speech');
             speakResponse(messages[messages.length - 1]?.text || 'Audio not available');
         };
 
         audio.play().catch(e => {
-            console.error('❌ Audio play failed:', e);
-            console.log('🔄 Falling back to text-to-speech');
-            // Fallback to text-to-speech
+            console.error('Audio play failed:', e);
+            console.log('Falling back to text-to-speech');
             speakResponse(messages[messages.length - 1]?.text || 'Audio not available');
         });
     };
@@ -1754,14 +1709,12 @@ const VoiceBRIT = () => {
             type: 'brit',
             text: `System updated to Day ${day}. How can I assist you with today's activities?`
         }]);
-        // Hide buttons when switching days
         setButtonsHidden(true);
     };
 
     const openDayVideo = () => {
         const video = BIBLE_VIDEOS[currentDay];
         if (video) {
-            // Create fullscreen overlay container
             const overlay = document.createElement('div');
             overlay.style.cssText = `
                 position: fixed;
@@ -1776,7 +1729,6 @@ const VoiceBRIT = () => {
                 justify-content: center;
             `;
 
-            // Create iframe for YouTube embed - fullscreen
             const iframe = document.createElement('iframe');
             iframe.src = `https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0&modestbranding=1&fs=1&enablejsapi=1`;
             iframe.style.cssText = `
@@ -1789,7 +1741,6 @@ const VoiceBRIT = () => {
             iframe.allowFullscreen = true;
             iframe.title = video.title;
 
-            // Add close button
             const closeButton = document.createElement('button');
             closeButton.innerHTML = '×';
             closeButton.style.cssText = `
@@ -1812,7 +1763,6 @@ const VoiceBRIT = () => {
                 font-weight: bold;
             `;
 
-            // Add video title
             const title = document.createElement('div');
             title.innerHTML = video.title;
             title.style.cssText = `
@@ -1829,7 +1779,6 @@ const VoiceBRIT = () => {
                 text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
             `;
 
-            // Add keyboard hint
             const keyboardHint = document.createElement('div');
             keyboardHint.style.cssText = `
                 position: absolute;
@@ -1848,14 +1797,12 @@ const VoiceBRIT = () => {
             `;
             keyboardHint.innerHTML = 'Press Q or click × to close';
 
-            // Auto-close timer based on video duration (close right when video ends)
             const videoDurationMs = {
-                1: 98000,  // 1:38 = 98 seconds
-                2: 155500, // 2:34 = 154 seconds + 1.5 seconds = 155.5 seconds
-                3: 113000  // 1:51 = 111 seconds + 2 seconds = 113 seconds
+                1: 98000,
+                2: 155500,
+                3: 113000
             };
 
-            // Close function
             const closeVideo = () => {
                 if (document.body.contains(overlay)) {
                     document.body.removeChild(overlay);
@@ -1867,26 +1814,22 @@ const VoiceBRIT = () => {
                 }
             };
 
-            // Set up auto-close timer (exact duration, no extra time)
             const autoCloseTimer = setTimeout(() => {
                 console.log('Video finished - auto-closing player immediately');
                 closeVideo();
             }, videoDurationMs[currentDay]);
 
-            // Close on Q key
             const handleKeyClose = (e) => {
                 if (e.key === 'q' || e.key === 'Q') {
                     closeVideo();
                 }
             };
 
-            // Listen for YouTube player messages (for instant end detection)
             const handleMessage = (event) => {
                 if (event.origin !== 'https://www.youtube.com') return;
 
                 try {
                     const data = JSON.parse(event.data);
-                    // YouTube player state: 0 = ended
                     if (data.info && data.info.playerState === 0) {
                         console.log('YouTube video ended - closing player instantly');
                         closeVideo();
@@ -1895,7 +1838,7 @@ const VoiceBRIT = () => {
                     // Ignore invalid messages
                 }
             };
-            // Hover effects for close button
+
             closeButton.onmouseenter = () => {
                 closeButton.style.background = 'rgba(255, 107, 53, 0.3)';
                 closeButton.style.boxShadow = '0 0 25px rgba(255, 107, 53, 0.6)';
@@ -1907,26 +1850,22 @@ const VoiceBRIT = () => {
                 closeButton.style.transform = 'scale(1)';
             };
 
-            // Event listeners
             closeButton.onclick = closeVideo;
             window.addEventListener('keydown', handleKeyClose);
             window.addEventListener('message', handleMessage);
 
-            // Append elements
             overlay.appendChild(iframe);
             overlay.appendChild(closeButton);
             overlay.appendChild(title);
             overlay.appendChild(keyboardHint);
             document.body.appendChild(overlay);
 
-            // Add entrance animation
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.transition = 'opacity 0.3s ease';
                 overlay.style.opacity = '1';
             }, 10);
 
-            // Auto-request fullscreen after a brief delay
             setTimeout(() => {
                 if (iframe.requestFullscreen) {
                     iframe.requestFullscreen().catch(() => {
@@ -1939,7 +1878,6 @@ const VoiceBRIT = () => {
                 }
             }, 500);
         } else {
-            // Fallback for missing video
             alert(`Video for Day ${currentDay} not available yet. Please check back later or contact support.`);
         }
     };
@@ -1947,8 +1885,6 @@ const VoiceBRIT = () => {
     const handleDialogueButton = (dialogue) => {
         setInput(dialogue);
         handleSubmit(null, dialogue);
-
-        // Keep buttons visible after clicking (no auto-hide)
     };
 
     return (
@@ -1965,7 +1901,6 @@ const VoiceBRIT = () => {
                         <BritVideoContainer>
                             <BritVideoWrapper speaking={britState === 'speaking'}>
                                 <BritVideo autoPlay loop muted playsInline>
-                                    {/* Placeholder for BRIT video */}
                                     <div style={{
                                         width: '100%',
                                         height: '100%',
