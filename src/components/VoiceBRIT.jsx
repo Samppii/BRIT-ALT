@@ -1187,11 +1187,23 @@ const DialogueIndicator = styled.div`
     }
 `;
 
-// Bible Videos Data
+// Bible Videos Data - Using YouTube embeds
 const BIBLE_VIDEOS = {
-    1: { url: "/videos/day1_bible_story.mp4", duration: "1:38", title: "Day 1 - Paul's Conversion" },
-    2: { url: "/videos/day2_bible_story.mp4", duration: "2:34", title: "Day 2 - Paul and Silas in Prison" },
-    3: { url: "/videos/day3_bible_story.mp4", duration: "1:51", title: "Day 3 - Paul's Transformation" }
+    1: {
+        youtubeId: "rLZ67inPx-4", // Day 1 - Paul's Conversion
+        duration: "1:38",
+        title: "Day 1 - Paul's Conversion"
+    },
+    2: {
+        youtubeId: "jtV2PV9n3cY", // Day 2 - Paul and Silas in Prison
+        duration: "2:34",
+        title: "Day 2 - Paul and Silas in Prison"
+    },
+    3: {
+        youtubeId: "E_IsmzsFU5Y", // Day 3 - Paul's Transformation
+        duration: "1:51",
+        title: "Day 3 - Paul's Transformation"
+    }
 };
 
 // Dialogue Buttons Data
@@ -1507,11 +1519,11 @@ const VoiceBRIT = () => {
 
         // Check if this is the Day 3 highlighted letters dialogue
         if (currentDay === 3 && userMessage.toLowerCase().includes('highlighted letters') &&
-            userMessage.toLowerCase().includes('a') && userMessage.toLowerCase().includes('d') &&
-            userMessage.toLowerCase().includes('j') && userMessage.toLowerCase().includes('u') &&
-            userMessage.toLowerCase().includes('s') && userMessage.toLowerCase().includes('t') &&
-            userMessage.toLowerCase().includes('m') && userMessage.toLowerCase().includes('e') &&
-            userMessage.toLowerCase().includes('n') && userMessage.toLowerCase().includes('t')) {
+            (userMessage.toLowerCase().includes('a') && userMessage.toLowerCase().includes('d') &&
+                userMessage.toLowerCase().includes('j') && userMessage.toLowerCase().includes('u') &&
+                userMessage.toLowerCase().includes('s') && userMessage.toLowerCase().includes('t') &&
+                userMessage.toLowerCase().includes('m') && userMessage.toLowerCase().includes('e') &&
+                userMessage.toLowerCase().includes('n') && userMessage.toLowerCase().includes('t'))) {
 
             // Add user message
             setMessages([...messages, { type: 'user', text: userMessage }]);
@@ -1749,142 +1761,186 @@ const VoiceBRIT = () => {
     const openDayVideo = () => {
         const video = BIBLE_VIDEOS[currentDay];
         if (video) {
-            // Create a video element with preloading
-            const videoElement = document.createElement('video');
-            videoElement.src = video.url;
-            videoElement.controls = true;
-            videoElement.preload = 'metadata'; // Preload metadata for faster start
-            videoElement.style.cssText = `
+            // Create fullscreen overlay container
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 100%;
-                height: 100%;
+                width: 100vw;
+                height: 100vh;
                 background: black;
                 z-index: 9999;
-                object-fit: contain;
-            `;
-
-            // Show loading indicator
-            const loadingDiv = document.createElement('div');
-            loadingDiv.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                color: #00d4ff;
-                font-family: monospace;
-                font-size: 1.5rem;
-                z-index: 10001;
-                text-align: center;
-            `;
-            loadingDiv.innerHTML = 'LOADING VIDEO...<br/><div style="margin-top: 1rem; font-size: 1rem;">Please wait...</div>';
-
-            // Add error handling for missing video files
-            videoElement.onerror = () => {
-                document.body.removeChild(loadingDiv);
-                alert(`Video: ${video.title} (${video.duration})\n\nVideo file not found or failed to load. Please check your network connection.\n\nFor now, this would play the Bible story video for Day ${currentDay}.`);
-                document.body.removeChild(videoElement);
-                if (document.body.contains(closeButton)) {
-                    document.body.removeChild(closeButton);
-                }
-                if (document.body.contains(keyboardHint)) {
-                    document.body.removeChild(keyboardHint);
-                }
-            };
-
-            // Remove loading indicator when video can play
-            videoElement.oncanplay = () => {
-                if (document.body.contains(loadingDiv)) {
-                    document.body.removeChild(loadingDiv);
-                }
-            };
-
-            // Add close button
-            const closeButton = document.createElement('button');
-            closeButton.innerHTML = '×';
-            closeButton.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                width: 50px;
-                height: 50px;
-                background: rgba(0, 0, 0, 0.7);
-                border: 2px solid white;
-                color: white;
-                font-size: 30px;
-                cursor: pointer;
-                z-index: 10000;
-                border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
             `;
 
+            // Create iframe for YouTube embed - fullscreen
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0&modestbranding=1&fs=1&enablejsapi=1`;
+            iframe.style.cssText = `
+                width: 100vw;
+                height: 100vh;
+                border: none;
+                background: black;
+            `;
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen";
+            iframe.allowFullscreen = true;
+            iframe.title = video.title;
+
+            // Add close button
+            const closeButton = document.createElement('button');
+            closeButton.innerHTML = '×';
+            closeButton.style.cssText = `
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                width: 60px;
+                height: 60px;
+                background: rgba(0, 0, 0, 0.8);
+                border: 3px solid #ff6b35;
+                color: #ff6b35;
+                font-size: 36px;
+                cursor: pointer;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                z-index: 10000;
+                font-weight: bold;
+            `;
+
+            // Add video title
+            const title = document.createElement('div');
+            title.innerHTML = video.title;
+            title.style.cssText = `
+                position: absolute;
+                top: 30px;
+                left: 30px;
+                color: #00d4ff;
+                font-family: monospace;
+                font-size: 1.4rem;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                z-index: 10000;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            `;
+
             // Add keyboard hint
             const keyboardHint = document.createElement('div');
             keyboardHint.style.cssText = `
-                position: fixed;
-                bottom: 20px;
+                position: absolute;
+                bottom: 30px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: rgba(0, 0, 0, 0.7);
-                color: white;
-                padding: 10px 20px;
-                border-radius: 5px;
+                background: rgba(0, 0, 0, 0.8);
+                color: #00d4ff;
+                padding: 15px 25px;
+                border-radius: 8px;
                 font-family: monospace;
+                font-size: 1.1rem;
                 z-index: 10000;
+                border: 2px solid #00d4ff;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
             `;
-            keyboardHint.innerHTML = 'Press ESC or C to close';
+            keyboardHint.innerHTML = 'Press Q or click × to close';
+
+            // Auto-close timer based on video duration (close right when video ends)
+            const videoDurationMs = {
+                1: 98000,  // 1:38 = 98 seconds
+                2: 155500, // 2:34 = 154 seconds + 1.5 seconds = 155.5 seconds
+                3: 113000  // 1:51 = 111 seconds + 2 seconds = 113 seconds
+            };
 
             // Close function
             const closeVideo = () => {
-                if (document.body.contains(videoElement)) {
-                    document.body.removeChild(videoElement);
-                }
-                if (document.body.contains(closeButton)) {
-                    document.body.removeChild(closeButton);
-                }
-                if (document.body.contains(keyboardHint)) {
-                    document.body.removeChild(keyboardHint);
-                }
-                if (document.body.contains(loadingDiv)) {
-                    document.body.removeChild(loadingDiv);
+                if (document.body.contains(overlay)) {
+                    document.body.removeChild(overlay);
                 }
                 window.removeEventListener('keydown', handleKeyClose);
+                window.removeEventListener('message', handleMessage);
+                if (autoCloseTimer) {
+                    clearTimeout(autoCloseTimer);
+                }
             };
 
-            // Close on ESC or C key
+            // Set up auto-close timer (exact duration, no extra time)
+            const autoCloseTimer = setTimeout(() => {
+                console.log('Video finished - auto-closing player immediately');
+                closeVideo();
+            }, videoDurationMs[currentDay]);
+
+            // Close on Q key
             const handleKeyClose = (e) => {
-                if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+                if (e.key === 'q' || e.key === 'Q') {
                     closeVideo();
                 }
             };
 
+            // Listen for YouTube player messages (for instant end detection)
+            const handleMessage = (event) => {
+                if (event.origin !== 'https://www.youtube.com') return;
+
+                try {
+                    const data = JSON.parse(event.data);
+                    // YouTube player state: 0 = ended
+                    if (data.info && data.info.playerState === 0) {
+                        console.log('YouTube video ended - closing player instantly');
+                        closeVideo();
+                    }
+                } catch (e) {
+                    // Ignore invalid messages
+                }
+            };
+            // Hover effects for close button
+            closeButton.onmouseenter = () => {
+                closeButton.style.background = 'rgba(255, 107, 53, 0.3)';
+                closeButton.style.boxShadow = '0 0 25px rgba(255, 107, 53, 0.6)';
+                closeButton.style.transform = 'scale(1.1)';
+            };
+            closeButton.onmouseleave = () => {
+                closeButton.style.background = 'rgba(0, 0, 0, 0.8)';
+                closeButton.style.boxShadow = 'none';
+                closeButton.style.transform = 'scale(1)';
+            };
+
             // Event listeners
-            videoElement.addEventListener('ended', closeVideo);
             closeButton.onclick = closeVideo;
             window.addEventListener('keydown', handleKeyClose);
+            window.addEventListener('message', handleMessage);
 
-            // Append to body
-            document.body.appendChild(loadingDiv);
-            document.body.appendChild(videoElement);
-            document.body.appendChild(closeButton);
-            document.body.appendChild(keyboardHint);
+            // Append elements
+            overlay.appendChild(iframe);
+            overlay.appendChild(closeButton);
+            overlay.appendChild(title);
+            overlay.appendChild(keyboardHint);
+            document.body.appendChild(overlay);
 
-            // Try to go fullscreen automatically
+            // Add entrance animation
+            overlay.style.opacity = '0';
             setTimeout(() => {
-                if (videoElement.requestFullscreen) {
-                    videoElement.requestFullscreen().catch(() => {
-                        // If auto-fullscreen fails, video still plays full window
+                overlay.style.transition = 'opacity 0.3s ease';
+                overlay.style.opacity = '1';
+            }, 10);
+
+            // Auto-request fullscreen after a brief delay
+            setTimeout(() => {
+                if (iframe.requestFullscreen) {
+                    iframe.requestFullscreen().catch(() => {
+                        console.log('Fullscreen request failed - user interaction may be required');
                     });
-                } else if (videoElement.webkitRequestFullscreen) {
-                    videoElement.webkitRequestFullscreen();
-                } else if (videoElement.mozRequestFullScreen) {
-                    videoElement.mozRequestFullScreen();
+                } else if (iframe.webkitRequestFullscreen) {
+                    iframe.webkitRequestFullscreen();
+                } else if (iframe.mozRequestFullScreen) {
+                    iframe.mozRequestFullScreen();
                 }
-                // Video will not auto-play - user must click play button
-            }, 100);
+            }, 500);
+        } else {
+            // Fallback for missing video
+            alert(`Video for Day ${currentDay} not available yet. Please check back later or contact support.`);
         }
     };
 
