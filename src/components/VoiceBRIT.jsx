@@ -1154,7 +1154,7 @@ const DialogueIndicator = styled.div`
     overflow: hidden;
     width: auto;
     max-width: 250px;
-    
+
     &::before {
         content: '';
         position: absolute;
@@ -1165,7 +1165,7 @@ const DialogueIndicator = styled.div`
         background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
         transition: left 0.5s ease;
     }
-    
+
     &:hover {
         background: rgba(0, 212, 255, 0.1);
         box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
@@ -1749,10 +1749,11 @@ const VoiceBRIT = () => {
     const openDayVideo = () => {
         const video = BIBLE_VIDEOS[currentDay];
         if (video) {
-            // Create a video element
+            // Create a video element with preloading
             const videoElement = document.createElement('video');
             videoElement.src = video.url;
             videoElement.controls = true;
+            videoElement.preload = 'metadata'; // Preload metadata for faster start
             videoElement.style.cssText = `
                 position: fixed;
                 top: 0;
@@ -1764,15 +1765,38 @@ const VoiceBRIT = () => {
                 object-fit: contain;
             `;
 
+            // Show loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: #00d4ff;
+                font-family: monospace;
+                font-size: 1.5rem;
+                z-index: 10001;
+                text-align: center;
+            `;
+            loadingDiv.innerHTML = 'LOADING VIDEO...<br/><div style="margin-top: 1rem; font-size: 1rem;">Please wait...</div>';
+
             // Add error handling for missing video files
             videoElement.onerror = () => {
-                alert(`Video: ${video.title} (${video.duration})\n\nVideo file not found. Please add ${video.url} to your public folder.\n\nFor now, this would play the Bible story video for Day ${currentDay}.`);
+                document.body.removeChild(loadingDiv);
+                alert(`Video: ${video.title} (${video.duration})\n\nVideo file not found or failed to load. Please check your network connection.\n\nFor now, this would play the Bible story video for Day ${currentDay}.`);
                 document.body.removeChild(videoElement);
                 if (document.body.contains(closeButton)) {
                     document.body.removeChild(closeButton);
                 }
                 if (document.body.contains(keyboardHint)) {
                     document.body.removeChild(keyboardHint);
+                }
+            };
+
+            // Remove loading indicator when video can play
+            videoElement.oncanplay = () => {
+                if (document.body.contains(loadingDiv)) {
+                    document.body.removeChild(loadingDiv);
                 }
             };
 
@@ -1824,6 +1848,9 @@ const VoiceBRIT = () => {
                 if (document.body.contains(keyboardHint)) {
                     document.body.removeChild(keyboardHint);
                 }
+                if (document.body.contains(loadingDiv)) {
+                    document.body.removeChild(loadingDiv);
+                }
                 window.removeEventListener('keydown', handleKeyClose);
             };
 
@@ -1840,6 +1867,7 @@ const VoiceBRIT = () => {
             window.addEventListener('keydown', handleKeyClose);
 
             // Append to body
+            document.body.appendChild(loadingDiv);
             document.body.appendChild(videoElement);
             document.body.appendChild(closeButton);
             document.body.appendChild(keyboardHint);
